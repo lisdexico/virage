@@ -1,5 +1,3 @@
-""" Bajate todo de virage """
-
 from virage import *
 
 virage = Virage()

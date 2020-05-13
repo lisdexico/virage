@@ -33,19 +33,19 @@ class Song:
         self.name = self.name.replace("+", "")
         self.name = self.name.replace("%20", " ")
 
-    def download(self, folder="."):
+    def download(self, folder="./music"):
         # Download audio
         try:
             response = requests.get(self.audio_url)
         except Exception:
             print(f"Failed to download {self.name} from {self.audio_url}")
 
-        """# Find or create folder to save it
+        # Find or create folder to save it
         try:
-            Path(path).mkdir(parents=True, exist_ok=True)
+            Path(folder).mkdir(parents=True, exist_ok=True)
         except Exception:
             print(f"Could not find or create folder {path}")
-        """
+        
         # Save audio
         filename = f"{folder}/{self.name}"
         try:

@@ -80,6 +80,7 @@ class Virage:
         print(f"\n\n Found total of {len(self.songs)} songs")
 
     def download_song(self, song, folder="."):
+        """Downloads 'song', saves it in 'folder' and writes the song name in 'self.memory_file'"""
         try:
             song.download(folder=folder)
         except Exception as e:
@@ -93,8 +94,18 @@ class Virage:
     def download_songs(self, song_list, folder=".", simultaneous_downloads=10):
         """ Download songs in the list in parallel, excecuting simultaneous_downloads at a time"""
         with concurrent.futures.ThreadPoolExecutor(max_workers=simultaneous_downloads) as excecutor:
-            excecutor.map(lambda song : self.download_song(song, folder=folder), self.songs)
+            excecutor.map(lambda song : self.download_song(song, folder=folder), song_list)
 
     def download_all_songs(self, folder=".", simultaneous_downloads=10):
-        self.download_songs(self.songs, folder, simultaneous_downloads)
+        self.download_songs(self.songs, folder=folder, simultaneous_downloads=simultaneous_downloads)
+
+    def download_new_songs(self, folder=".", simultaneous_downloads=10):
+        old_songs_names = []
+        try:
+            with open(self.memory_file, "r") as f:
+                old_songs_names = f.read().splitlines()
+        except Exception as e:
+            print("No memory file found, downloading all songs")
+        new_songs = [song for song in self.songs if song.name not in old_songs_names]
+        self.download_songs(new_songs, folder=folder, simultaneous_downloads=simultaneous_downloads)
 

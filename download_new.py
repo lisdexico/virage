@@ -8,8 +8,9 @@ try:
     Path(folder).mkdir(parents=True, exist_ok=True)
 except Exception:
     print(f"Could not find or create folder {path}")
+    return
 
 virage = Virage()
 virage.find_songs()
 print("Starting downloads...")
-virage.download_all_songs(folder=folder)
+virage.download_new_songs(folder=folder)

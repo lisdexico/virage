@@ -1,8 +1,6 @@
 import requests
 from html.parser import HTMLParser
 import concurrent.futures
-from pathlib import Path
-
 
 class MP3Finder(HTMLParser):
     """This class finds all links to mp3 audio in an html and saves them in the list self.MP3"""
@@ -61,6 +59,7 @@ class Virage:
         self.mp3_finder = MP3Finder()
         self.songs = []
         self.session = requests.Session()
+        self.memory_file = "list_of_downloaded_songs.txt"
 
     def __find_songs_in_html(self, page_html):
         self.mp3_finder.reset()
@@ -80,12 +79,22 @@ class Virage:
 
         print(f"\n\n Found total of {len(self.songs)} songs")
 
-    def download_songs(self, song_list, simultaneous_downloads=10):
+    def download_song(self, song, folder="."):
+        try:
+            song.download(folder=folder)
+        except Exception as e:
+            print(f"Failed to download and save {song.name}")
+            print(e)
+        else:
+            print(f"Successfully downloaded {song.name} and saved it in {folder}")
+            with open(self.memory_file, "a") as f:
+                f.write(song.name + "\n")
+
+    def download_songs(self, song_list, folder=".", simultaneous_downloads=10):
         """ Download songs in the list in parallel, excecuting simultaneous_downloads at a time"""
         with concurrent.futures.ThreadPoolExecutor(max_workers=simultaneous_downloads) as excecutor:
-            excecutor.map(Song.download, self.songs)
-        print("Done")
+            excecutor.map(lambda song : self.download_song(song, folder=folder), self.songs)
 
-    def download_all_songs(self, simultaneous_downloads=10):
-        self.download_songs(self.songs, simultaneous_downloads)
+    def download_all_songs(self, folder=".", simultaneous_downloads=10):
+        self.download_songs(self.songs, folder, simultaneous_downloads)
 

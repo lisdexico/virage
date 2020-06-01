@@ -49,8 +49,6 @@ class Song:
             raise
 
         
-
-
 class Virage:
     """This class will represent the v-i-r-a-g-e website and its contents"""
 

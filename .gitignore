@@ -3,4 +3,4 @@ __pycache__
 html_parser_test.py
 test_song.py
 mutagen_test.py
-.gigtignore
+.gitignore

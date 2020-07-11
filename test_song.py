@@ -1,6 +1,30 @@
 """ Test the song class """
 
 from virage import *
+from bs4 import BeautifulSoup
+
+# Get song
+
+html = requests.get("http://www.v-i-r-a-g-e.com/page/1/?ajx=1").content
+
+soup = BeautifulSoup(html, "html.parser")
+
+posts = soup.find_all(class_="post newpost type-post status-publish format-audio hentry category-non-classe post_format-post-format-audio")
+
+post = posts[0]
+
+audio_url = post.find(class_="control play").img["alt"]
+
+full_title = post.find(class_="entry-title").string.strip()
+
+image_url = post.find(class_="attachment-post-thumbnail wp-post-image front")["src"]
+
+song = Song(audio_url, full_title, image_url)
+
+song.download()
+
+'''
+
 
 # Successful download
 print("\n\n---------------------------------")
@@ -34,3 +58,5 @@ try:
     song.download("./missing_folder")
 except Exception as e:
     print(e)
+
+'''
